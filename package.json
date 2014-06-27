@@ -1,0 +1,20 @@
+{
+    "name": "nodebb-plugin-ifsta-api",
+    "version": "0.0.0",
+    "description": "NodeBB IFSTA API integration",
+    "main": "library.js",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/martin-williams/nodebb-plugin-ifsta-api"
+    },
+    "author": {
+        "name": "Martin Williams",
+        "email": "martin.williams@beardon.com"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/martin-williams/nodebb-plugin-ifsta-api/issues"
+    },
+    "homepage": "https://github.com/martin-williams/nodebb-plugin-ifsta-api",
+    "_id": "nodebb-plugin-ifsta-api@0.0.0"
+}

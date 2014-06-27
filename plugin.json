@@ -1,0 +1,11 @@
+{
+    "id": "nodebb-plugin-ifsta-api",
+    "name": "IFSTA API",
+    "description": "Plugin for integrating MyIfsta custom functionality.",
+    "library": "./library.js",
+    "hooks": [
+        { "hook": "action:app.load", "method": "init" },
+        { "hook": "filter:admin.header.build", "method": "addMenuItem" }
+    ],
+    "templates": "./templates"
+}
