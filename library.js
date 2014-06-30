@@ -2,7 +2,9 @@
     "use strict";
 
     var fs = module.parent.require('fs'),
-        path = module.parent.require('path');
+        path = module.parent.require('path'),
+        groups = module.parent.require('./groups'),
+        categories = module.parent.require('./categories');
 
     var constants = Object.freeze({
         'name': "IFSTA API",
@@ -21,6 +23,78 @@
 
         app.get('/admin/plugins/ifsta-api', middleware.admin.buildHeader, render);
         app.get('/api/admin/plugins/ifsta-api', render);
+
+        app.get('/add-group', function(req, res, next) {
+            groups.create(req.query.name, req.query.description, function(err, data) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.send({status: true, name: req.query.name});
+            });
+        });
+
+        app.get('/add-category', function(req, res, next) {
+            var newCatData = {
+                name: req.query.name,
+                description: req.query.description,
+                icon: "fa-comment-o",
+                bgColor: "#eee",
+                color: "#555",
+                order: ''
+            };
+
+            categories.create(newCatData, function(err, data) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.send({status: true, data: data});
+            });
+        });
+
+        app.get('/set-category-privileges', function(req, res, next) {
+            var priv = ['groups:find', 'groups:read', 'groups:topics:create', 'groups:topics:reply'];
+            var cid = req.query.cid;
+            var name = req.query.name;
+            var errs = [];
+
+            if (!cid || !name) {
+                return next(new Error('[[invalid data]]'));
+            }
+
+            for (var i = 0; i < priv.length; i++) {
+                join({
+                    cid: cid,
+                    name: name,
+                    privilege: priv[i]
+                }, function(err) {
+                    if (err) {
+                        errs.push(err);
+                    }
+                });
+            }
+
+            if (errs.length > 0) {
+                return next(errs[0]);
+            }
+
+            res.send({status: true});
+        });
+    };
+
+    var join = function(data, callback){
+        if (!data) {
+            return callback(new Error('[[error:invalid-data]]'));
+        }
+
+        groups.join('cid:' + data.cid + ':privileges:' + data.privilege, data.name, function(err) {
+            if (err) {
+                callback(err);
+            }
+
+            groups.hide('cid:' + data.cid + ':privileges:' + data.privilege, callback);
+        });
     };
 
     api.addMenuItem = function(custom_header, callback) {
